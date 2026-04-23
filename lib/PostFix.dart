@@ -12,25 +12,40 @@ class PostFix {
   bool isHigherPreference(String a, String b) {
     return preference(a) >= preference(b);
   }
+  (String,int) tokenizer(String  s, int i)
+  {
+  String ans = "";
+  while (s[i] != ',')
+  {
+  ans=ans+s[i];
+  i++;
+  }
+  ans= ans + ',';
+  return (ans,i);
 
-  int eval(String postfix) {
-    List<int> stack = [];
+  }
+
+  double eval(String postfix) {
+    List<double> stack = [];
 
     for (int i = 0; i < postfix.length; i++) {
       String ch = postfix[i];
 
-      if (ch.codeUnitAt(0) >= 48 && ch.codeUnitAt(0) <= 57) {
-        stack.add((ch.codeUnitAt(0) - 48));
+      if (!isOperator(ch)) {
+        var(String val,int j)=tokenizer(postfix,i);
+        i=j;
+        val=val.substring(0,val.length-1);
+        stack.add(double.parse(val));
       } else {
-        int op2 = stack.removeLast();
-        int op1 = stack.removeLast();
+        double op2 = stack.removeLast();
+        double op1 = stack.removeLast();
 
         switch (ch) {
           case '*':
             stack.add(op1 * op2);
             break;
           case '/':
-            stack.add(op1 ~/ op2);
+            stack.add(op1 / op2);
             break;
           case '+':
             stack.add(op1 + op2);
@@ -47,6 +62,22 @@ class PostFix {
 
     return stack.last;
   }
+bool isOperator(String s)
+{
+  if(s=="+"||s=="-"||s=="*"||s=="/"||s=="%")
+    {
+      return true;
+    }
+  return false;
+
+}
+  String formatResult(double value) {
+    if ((value - value.round()).abs() < 0.0000001) {
+      return value.round().toString();
+    } else {
+      return value.toString();
+    }
+  }
 
   String postfix(String input) {
     StringBuffer output = StringBuffer();
@@ -55,8 +86,10 @@ class PostFix {
     for (int i = 0; i < input.length; i++) {
       String ch = input[i];
 
-      if (ch.codeUnitAt(0) >= 48 && ch.codeUnitAt(0) <= 57) {
-        output.write(ch);
+      if (!isOperator(ch)) {
+        var(String val,int j)=tokenizer(input,i);
+        output.write(val);
+        i=j;
       } else {
         while (stack.isNotEmpty &&
             isHigherPreference(stack.last, ch)) {
