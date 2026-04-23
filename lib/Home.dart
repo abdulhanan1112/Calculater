@@ -57,7 +57,13 @@ class _HomeState extends State<Home> {
                               onPressed: () {
                                 setState(() {
                                   input = input.substring(0, input.length - 1);
-                                  infix = infix.substring(0, infix.length - 1);
+                                  if(obj.isOperator(infix[infix.length-1])) {
+                                    infix =infix.substring(0, infix.length - 2);
+                                  }
+                                  else
+                                    {
+                                      infix =infix.substring(0, infix.length - 1);
+                                    }
                                 });
                               },
                               style: ElevatedButton.styleFrom(
@@ -489,9 +495,15 @@ class _HomeState extends State<Home> {
                               onPressed: () {
                                 setState(() {
                                   infix+=',';
-                                  String postFix = obj.postfix(infix);
-                                  double ans = obj.eval(postFix);
-                                  input = obj.formatResult(ans);
+                                  try {
+                                    String postFix = obj.postfix(infix);
+                                    double ans = obj.eval(postFix);
+                                    input = obj.formatResult(ans);
+                                  }
+                                  catch(e) {
+                                    input='Syntax Error';
+
+                                  }
                                 });
                               },
                               style: ElevatedButton.styleFrom(
